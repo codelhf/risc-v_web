@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CPU模拟器web版</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <style>
+        html,body {
+            font-size: 14px;
+            position: relative;
+        }
+        #memory .row>* {
+            padding: 1px;
+        }
+        #register>*{
+            padding: 1px;
+        }
+        #register .form-control {
+            height: 28px;
+            line-height: 28px;
+        }
+    </style>
+</head>
+<body class="container">
+
+<div class="row" style="height: 100vh;padding: 10px;">
+
+    <div class="col-5" style="height: 100%;margin-right: 20px;">
+        <div class="row" style="height:30px;">内存地址</div>
+        <div class="row" id="memory" style="height: calc(100% - 30px);overflow-y:auto;">
+            <!-- <div class="row">
+                <div class="col-2" style="">0x000</div>
+                <div class="col-1"><input style="width:40px;font-size:12px" id="m${(i-3)}" readonly/></div>
+                <div class="col-1"><input style="width:40px;font-size:12px" id="m${(i-2)}" readonly/></div>
+                <div class="col-1"><input style="width:40px;font-size:12px" id="m${(i-1)}" readonly/></div>
+                <div class="col-1"><input style="width:40px;font-size:12px" id="m${(i)}" readonly/></div>
+                <div class="col-6" style="padding-left:10px" id="c${(i+1)/4-1}"></div>
+            </div> -->
+        </div>
+    </div>
+
+    <div class="col-6" style="height: 100%;">
+        <div class="row" style="height:30px;">寄存器</div>
+        <div class="row" id="register" style="overflow-y: auto;">
+            <!-- <div class="col-2">X0(zero)</div> -->
+            <!-- <div class="col-4"><input class="form-control" id="x0" readonly/></div> -->
+        </div>
+        <div class="row" id="control" style="height:auto;margin-top: 10px;">
+            <!-- <div class="row" style="height:30px;">显示器</div> -->
+            <!--<div class="row flex-fill">-->
+            <!--    <div style="background-color:green;border:solid">-->
+            <!--        <ul id="messagesList"></ul>-->
+            <!--    </div>-->
+            <!--</div>-->
+            <div class="row" style="height:200px;">
+                <textarea class="form-control" id="messageInput" rows="10" style="height:100%;"></textarea>
+            </div>
+            <div class="row" style="height:30px;margin-top: 10px;">
+                <div class="col-12 text-start">
+                    <button class="btn btn-primary mb-3" id="run">运行</button>
+                    <button class="btn btn-primary mb-3" id="runstep">单步</button>
+                    <button class="btn btn-primary mb-3" id="pause">暂停</button>
+                    <button class="btn btn-primary mb-3" id="reset">重启</button>
+                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#debugwindow">断点</button>
+                    <!-- <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#setvaluewindow">设置值</button> -->
+                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#writewindow">写指令</button>
+                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#bookwindow">查手册</button>
+                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#translatewindow">批量翻译</button>
+                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exportwindow">导出</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--debugwindow-->
+<div class="modal fade" id="debugwindow" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">指定地址</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">断点地址，多地址用逗号分隔</label>
+                    <input class="form-control" id="debugaddr" value="0x00"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button id="debug" type="button" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--setvaluewindow-->
+<div class="modal fade" id="setvaluewindow" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">修改寄存器值</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">寄存器</label>
+                    <input class="form-control" id="registerNumber" value="" />
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">设置值</label>
+                    <input class="form-control" id="registerValue" value="" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button id="setvalue" type="button" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--writewindow-->
+<div class="modal fade" id="writewindow" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">指定地址</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">起始地址</label>
+                    <input class="form-control" id="startaddr" value="0x64"/>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">文本</label>
+                    <input type="checkbox" class="form-check-input" id="istext" value="text"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button id="write" type="button" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- bookwindow -->
+<div class="modal fade" id="bookwindow" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">命令手册</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">选择命令</label>
+                    <select class="form-select" aria-label="请选择" id="bookcmd" onchange="handleChange(this)">
+                        <option value="" selected>请选择</option>
+                    </select>
+                </div>
+                <div class="mb-3" id="bookdes">
+                </div>
+                <div class="mb-3" id="rs1row" style="display:none">
+                    <label for="exampleFormControlTextarea1" class="form-label">源寄存器1</label>
+                    <input class="form-control" id="bookrs1" placeholder="输入rs1的编号">
+                </div>
+                <div class="mb-3" id="rs2row" style="display:none">
+                    <label for="exampleFormControlTextarea1" class="form-label">源寄存器2</label>
+                    <input class="form-control" id="bookrs2" placeholder="输入rs2的编号">
+                </div>
+                <div class="mb-3" id="rdrow" style="display:none">
+                    <label for="exampleFormControlTextarea1" class="form-label">目标寄存器</label>
+                    <input class="form-control" id="bookrd" placeholder="输入rd的编号">
+                </div>
+                <div class="mb-3" id="immrow" style="display:none">
+                    <label for="exampleFormControlTextarea1" class="form-label">立即数</label>
+                    <input class="form-control" id="bookimm" placeholder="输入imm">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button id="book" type="button" class="btn btn-primary">确定</button>
+            </div>
+            <script src="/js/book.js"></script>
+        </div>
+    </div>
+</div>
+<!--translatewindow-->
+<div class="modal fade" id="translatewindow" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">批量翻译</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <textarea class="form-control" id="textInput" rows="10" style="height:220px;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button id="translate" type="button" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--exportwindow-->
+<div class="modal fade" id="exportwindow" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">指定地址</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">起始地址</label>
+                    <input class="form-control" id="exportaddr" value="0x00"/>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label">字节数</label>
+                    <input class="form-control" id="exportlength" value=""/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button id="export" type="button" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/lib/jquery/dist/jquery.min.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/js/index.js"></script>
+</body>
+</html>

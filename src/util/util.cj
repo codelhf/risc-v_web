@@ -1,0 +1,166 @@
+package riscv.util
+
+import encoding.hex.*
+import encoding.json.*
+import std.convert.*
+import std.format.*
+import std.collection.ArrayList
+
+public class Util {
+
+    public static func isBlank(str: String) {
+        return str.trimAscii().isEmpty()
+    }
+
+    public static func isNotBlank(str: String) {
+        return !isBlank(str)
+    }
+
+    public static func to2XString(value: Int): String {
+        return value.format("02X")
+    }
+
+    public static func to8XString(value: Int): String {
+        return value.format("08X")
+    }
+
+    public static func to8BString(value: UInt8): String {
+        return value.format("08B")
+    }
+
+    public static func to32BString(value: Int): String {
+        var n = value.format("032B")
+        if (!n.startsWith("-")) {
+            return n
+        }
+        // 取反码
+        var str = StringBuilder()
+        for (i in 0..n.size) {
+            let bit = n[i..i+1]
+            if (bit == "1") {
+                str.append("0")
+            } else {
+                str.append("1")
+            }
+        }
+        // 加一取补码
+        let result = Util.binToInt(str.toString()) + 1
+        return result.format("B")
+    }
+
+    // public static func isHexString(str: String): Bool {
+    //     return str.startsWith("0x")
+    // }
+
+    // public static func isBinaryString(str: String): Bool {
+    //     return str.startsWith("0b")
+    // }
+
+    public static func strToInt(str: String): Int64 {
+        var val = str.trimAscii().toAsciiLower()
+        if (val.startsWith("0x")) {
+            return Int64.parse(val)
+        }
+        if (val.startsWith("0b")) {
+            return Int64.parse(val)
+        }
+        return Int64.parse(val)
+    }
+
+    public static func binToInt(str: String): Int64 {
+        var val = str.trimAscii().toAsciiLower()
+        if (!val.startsWith("0b")) {
+            val = "0b" + val
+        }
+        return Int64.parse(val)
+    }
+
+    public static func immToInt(str: String): Int64 {
+        var line = str.trimAscii()
+        var prefix = "0"
+        if (line.startsWith("1")) {
+            prefix = "1"
+        }
+        while (line.size < 32) {
+            line = prefix + line
+        }
+        if (line.size > 32) {
+            line = line[0..32]
+        }
+        // println("line: ${line}")
+        var result = Int64.parse("0b" + line)
+        // println("result: ${result}")
+        // 4294967296
+        if (prefix == "1") {
+            return Int64(result - 4294967296)
+        }
+        return result
+    }
+
+    public static func hexToBinary(str: String): String {
+        var line = str.trimAscii()
+        while (line.size < 8) {
+            line = "0" + line
+        }
+        if (line.size > 8) {
+            line = line[0..8]
+        }
+        var rv = strToInt("0x" + line)
+        return to32BString(rv)
+    }
+
+    public static func binaryToHex(str: String): String {
+        var line = str.trimAscii()
+        while (line.size < 32) {
+            line = "0" + line
+        }
+        if (line.size > 32) {
+            line = line[0..32]
+        }
+        var rv = strToInt("0b" + line)
+        return to8XString(rv)
+    }
+
+    public static func binaryToBytes(str: String): ArrayList<UInt8> {
+        var line = str.trimAscii().replace("-", "")
+        while (line.size < 32) {
+            line = "0" + line
+        }
+        if (line.size > 32) {
+            line = line[0..32]
+        }
+        var i = line.size - 1
+        var rv = ArrayList<UInt8>()
+        // 11111111-11101111-11110001-01101111
+        while (i >= 0) {
+            if (i % 8 == 0) {
+                var numStr = line[i..(i + 8)]
+                var num = UInt8.parse("0b${numStr}")
+                rv.append(num)
+            }
+            i = i - 1
+        }
+        return rv
+    }
+
+    public static func toList(str: String): ArrayList<String> {
+        var json = JsonValue.fromStr(str)
+        let jsonObj = json.asObject()
+        var result = ArrayList<String>()
+        match (jsonObj.get("cmd")) {
+            case Some(v) => v
+                let cmd = v.toString()
+                result.append(cmd[1..cmd.size-1])
+            case None =>
+                result.append("")
+        }
+        match (jsonObj.get("msg")) {
+            case Some(v) => v
+                let msg = v.toString()
+                result.append(msg[1..msg.size-1])
+            case None =>
+                result.append("")
+        }
+        return result
+    }
+}
