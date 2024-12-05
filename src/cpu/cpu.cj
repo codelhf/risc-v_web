@@ -367,11 +367,11 @@ public class Cpu {
                 continue
             }
             var command = translateCmd(cmd, rs1, rs2, rd, imm)
+            rv.append(command)
             if (command.startsWith("//")) {
                 // 解析错误，跳出循环
                 break
             }
-            rv.append(command)
         }
         return rv.toString()
     }
