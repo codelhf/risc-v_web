@@ -366,7 +366,12 @@ public class Cpu {
                 println("unknown cmd: ${cmd}")
                 continue
             }
-            rv.append(translateCmd(cmd, rs1, rs2, rd, imm))
+            var command = translateCmd(cmd, rs1, rs2, rd, imm)
+            if (command.startsWith("//")) {
+                // 解析错误，跳出循环
+                break
+            }
+            rv.append(command)
         }
         return rv.toString()
     }

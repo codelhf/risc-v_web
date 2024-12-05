@@ -282,8 +282,8 @@ public open class Instruction {
             }
             if (rv == "") {
                 rv = "${func7}${getRegStr(rs2value)}${getRegStr(rs1value)}${func3}${getRegStr(rdvalue)}${op}"
-                rv += "//${cmd.toAsciiLower()} x${rdvalue},x${rs1value},x${rs2value}\\n"
             }
+            rv += "//${cmd.toAsciiLower()} x${rdvalue},x${rs1value},x${rs2value}\\n"
         } else if (InstructionType.I.contains(cmd)) {
             op = Const.OP0010011Str
             if (cmd == InstructionType.ADDI) {
@@ -339,11 +339,11 @@ public open class Instruction {
                 } else {
                     rv = "${getImmStr(immvalue, 12)}${getRegStr(rs1value)}${func3}${getRegStr(rdvalue)}${op}"
                 }
-                if (cmd.startsWith("L") || cmd.equalsIgnoreAsciiCase(InstructionType.JALR)) {
-                    rv += "//${cmd.toAsciiLower()} x${rdvalue},${immvalue}(x${rs1value})\\n"
-                } else {
-                    rv += "//${cmd.toAsciiLower()} x${rdvalue},x${rs1value},${immvalue}\\n"
-                }
+            }
+            if (cmd.startsWith("L") || cmd.equalsIgnoreAsciiCase(InstructionType.JALR)) {
+                rv += "//${cmd.toAsciiLower()} x${rdvalue},${immvalue}(x${rs1value})\\n"
+            } else {
+                rv += "//${cmd.toAsciiLower()} x${rdvalue},x${rs1value},${immvalue}\\n"
             }
         } else if (InstructionType.B.contains(cmd)) {
             op = Const.OP1100011Str
@@ -372,8 +372,8 @@ public open class Instruction {
             if (rv == "") {
                 var ims = getImmStr(immvalue, 12) + "0"
                 rv = "${ims[0..1]}${ims[2..8]}${getRegStr(rs2value)}${getRegStr(rs1value)}${func3}${ims[8..12]}${ims[1..2]}${op}"
-                rv += "//${cmd.toAsciiLower()} x${rs1value},x${rs2value},${immvalue}\\n"
             }
+            rv += "//${cmd.toAsciiLower()} x${rs1value},x${rs2value},${immvalue}\\n"
         } else if (InstructionType.S.contains(cmd)) {
             op = Const.OP0100011Str
             if (cmd == InstructionType.SB) {
@@ -395,8 +395,8 @@ public open class Instruction {
             if (rv == "") {
                 var ims = getImmStr(immvalue, 12)
                 rv = "${ims[0..7]}${getRegStr(rs2value)}${getRegStr(rs1value)}${func3}${ims[7..12]}${op}"
-                rv += "//${cmd.toAsciiLower()} x${rs2value},${immvalue}(x${rs1value})\\n"
             }
+            rv += "//${cmd.toAsciiLower()} x${rs2value},${immvalue}(x${rs1value})\\n"
         } else if (InstructionType.U.contains(cmd)) {
             if (cmd == InstructionType.AUIPC) {
                 op = Const.OP0010111Str
@@ -412,8 +412,8 @@ public open class Instruction {
             if (rv == "") {
                 var ims = getImmStr(immvalue, 20)
                 rv = "${ims}${getRegStr(rdvalue)}${op}"
-                rv += "//${cmd.toAsciiLower()} x${rdvalue},${immvalue}\\n"
             }
+            rv += "//${cmd.toAsciiLower()} x${rdvalue},${immvalue}\\n"
         } else if (InstructionType.J.contains(cmd)) {
             op = Const.OP1101111Str
             if (rdvalue < 0 || rdvalue > 31) {
