@@ -77,7 +77,7 @@ function receiveData(data) {
 function initMemory(ramSize = 200, romSize = 100) {
     var html = "";
     // 16k内存 41059
-    ramSize = 200
+    // ramSize = 200
     for (let i = ramSize - 1; i >= 100; i -= 4) {
         html += `
         <div class="row">
