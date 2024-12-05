@@ -9,8 +9,8 @@ public open class Instruction {
     public var rs1: Int64 = 0    //第一个源寄存器
     public var rs2: Int64 = 0    //第二个源寄存器
     public var imm: Int64 = 0    //立即数，常量
-    public var fun3: Int64 = 0   //三个字节的编码
-    public var fun7: Int64 = 0   //七个字节的编码
+    public var func3: Int64 = 0   //三个字节的编码
+    public var func7: Int64 = 0   //七个字节的编码
 
     public open func execute(cpuInfo: Cpu) {
         cpuInfo._running = true
@@ -56,8 +56,8 @@ public open class Instruction {
         ins.rd = Util.binToUInt(binStr[20..25])
         ins.rs1 = Util.binToUInt(binStr[12..17])
         ins.rs2 = Util.binToUInt(binStr[7..12])
-        ins.fun3 = Util.binToUInt(binStr[17..20])
-        ins.fun7 = Util.binToUInt(binStr[0..7])
+        ins.func3 = Util.binToUInt(binStr[17..20])
+        ins.func7 = Util.binToUInt(binStr[0..7])
 
         var imm: Int64 = 0
         if (ins.opCode == Const.OP0000011 || ins.opCode == Const.OP0010011 || ins.opCode == Const.OP1100111) {
@@ -79,134 +79,132 @@ public open class Instruction {
         ins.imm = imm
 
         let opCode = ins.opCode
-        let fun3 = ins.fun3
-        let fun7 = ins.fun7
+        let func3 = ins.func3
+        let func7 = ins.func7
 
         var rv = Instruction()
         // R-type
         if (opCode == Const.OP0110011) {
-            if (fun3 == Const.F000) {
-                if (fun7 == Const.F0000000) {
+            if (func3 == Const.F000) {
+                if (func7 == Const.F0000000) {
                     rv = ADD()
                     rv.insCmd = InstructionType.ADD
-                } else if (fun7 == Const.F0100000) {
+                } else if (func7 == Const.F0100000) {
                     rv = SUB()
                     rv.insCmd = InstructionType.SUB
-                } else if (fun7 == Const.F0000001) {
+                } else if (func7 == Const.F0000001) {
                     rv = MUL()
                     rv.insCmd = InstructionType.MUL
                 }
-            } else if (fun3 == Const.F111) {
+            } else if (func3 == Const.F111) {
                 rv = AND()
                 rv.insCmd = InstructionType.AND
-            } else if (fun3 == Const.F110) {
+            } else if (func3 == Const.F110) {
                 rv = OR()
                 rv.insCmd = InstructionType.OR
-            } else if (fun3 == Const.F100) {
+            } else if (func3 == Const.F100) {
                 rv = XOR()
                 rv.insCmd = InstructionType.XOR
-            } else if (fun3 == Const.F001) {
+            } else if (func3 == Const.F001) {
                 rv = SLL()
                 rv.insCmd = InstructionType.SLL
-            } else if (fun3 == Const.F010) {
+            } else if (func3 == Const.F010) {
                 rv = SLT()
                 rv.insCmd = InstructionType.SLT
-            } else if (fun3 == Const.F011) {
+            } else if (func3 == Const.F011) {
                 rv = SLTU()
                 rv.insCmd = InstructionType.SLTU
-            } else if (fun3 == Const.F101) {
-                if (fun7 == Const.F0000000) {
+            } else if (func3 == Const.F101) {
+                if (func7 == Const.F0000000) {
                     rv = SRL()
                     rv.insCmd = InstructionType.SRL
-                } else if (fun7 ==Const.F0100000) {
+                } else if (func7 ==Const.F0100000) {
                     rv = SRA()
                     rv.insCmd = InstructionType.SRA
                 }
             }
         // I-type
         } else if (opCode == Const.OP0010011) {
-            if (fun3 == Const.F000) {
+            if (func3 == Const.F000) {
                 rv = ADDI()
                 rv.insCmd = InstructionType.ADDI
-            } else if (fun3 == Const.F111) {
+            } else if (func3 == Const.F111) {
                 rv = ANDI()
                 rv.insCmd = InstructionType.ANDI
-            } else if (fun3 == Const.F110) {
+            } else if (func3 == Const.F110) {
                 rv = ORI()
                 rv.insCmd = InstructionType.ORI
-            } else if (fun3 == Const.F100) {
+            } else if (func3 == Const.F100) {
                 rv = XORI()
                 rv.insCmd = InstructionType.XORI
-            } else if (fun3 == Const.F010) {
+            } else if (func3 == Const.F010) {
                 rv = SLTI()
                 rv.insCmd = InstructionType.SLTI
-            } else if (fun3 == Const.F011) {
+            } else if (func3 == Const.F011) {
                 rv = SLTIU()
                 rv.insCmd = InstructionType.SLTIU
-            } else if (fun3 == Const.F101) {
-                if (fun7== Const.F0000000) {}
-            } else if (fun3 == Const.F001) {
+            } else if (func3 == Const.F001) {
                 rv = SLLI()
                 rv.insCmd = InstructionType.SLLI
-            } else if (fun3 == Const.F101) {
-                if (fun7 == Const.F0000000) {
+            } else if (func3 == Const.F101) {
+                if (func7 == Const.F0000000) {
                     rv = SRLI()
                     rv.insCmd = InstructionType.SRLI
-                } else if (fun7 == Const.F0100000) {
+                } else if (func7 == Const.F0100000) {
                     rv = SRAI()
                     rv.insCmd = InstructionType.SRAI
                 }
             }
         } else if (opCode == Const.OP0000011) {
-            if (fun3 == Const.F000) {
+            if (func3 == Const.F000) {
                 rv = LB()
                 rv.insCmd = InstructionType.LB
-            } else if (fun3 == Const.F001) {
+            } else if (func3 == Const.F001) {
                 rv = LH()
                 rv.insCmd = InstructionType.LH
-            } else if (fun3 == Const.F010) {
+            } else if (func3 == Const.F010) {
                 rv = LW()
                 rv.insCmd = InstructionType.LW
-            } else if (fun3 == Const.F100) {
+            } else if (func3 == Const.F100) {
                 rv = LBU()
                 rv.insCmd = InstructionType.LBU
-            } else if (fun3 == Const.F101) {
+            } else if (func3 == Const.F101) {
                 rv = LHU()
                 rv.insCmd = InstructionType.LHU
             }
-        } else if (opCode == Const.OP1100111 && fun3 == Const.F000) {
+        } else if (opCode == Const.OP1100111 && func3 == Const.F000) {
             rv = JALR()
             rv.insCmd = InstructionType.JALR
         // B-type
-        } else if (opCode == Const.OP1100011 && fun3 == Const.F000) {
-            if (fun3 == Const.F000) {
+        } else if (opCode == Const.OP1100011) {
+            if (func3 == Const.F000) {
                 rv = BEQ()
                 rv.insCmd = InstructionType.BEQ
-            } else if (fun3 == Const.F001) {
+            } else if (func3 == Const.F001) {
                 rv = BNE()
                 rv.insCmd = InstructionType.BNE
-            } else if (fun3 == Const.F100) {
+            } else if (func3 == Const.F100) {
                 rv = BLT()
                 rv.insCmd = InstructionType.BLT
-            } else if (fun3 == Const.F101) {
+            } else if (func3 == Const.F101) {
                 rv = BGE()
                 rv.insCmd = InstructionType.BGE
-            } else if (fun3 == Const.F110) {
+            } else if (func3 == Const.F110) {
                 rv = BLTU()
                 rv.insCmd = InstructionType.BLTU
-            } else if (fun3 == Const.F111) {
+            } else if (func3 == Const.F111) {
                 rv = BGEU()
                 rv.insCmd = InstructionType.BGEU
             }
         // S-type
         } else if (opCode == Const.OP0100011) {
-            if (fun3 == Const.F000) {
+            if (func3 == Const.F000) {
                 rv = SB()
                 rv.insCmd = InstructionType.SB
-            } else if (fun3 == Const.F001) {
+            } else if (func3 == Const.F001) {
                 rv = SH()
                 rv.insCmd = InstructionType.SH
-            } else if (fun3 == Const.F010) {
+            } else if (func3 == Const.F010) {
                 rv = SW()
                 rv.insCmd = InstructionType.SW
             }
@@ -228,8 +226,8 @@ public open class Instruction {
         rv.rd = ins.rd
         rv.rs1 = ins.rs1
         rv.rs2 = ins.rs2
-        rv.fun3 = ins.fun3
-        rv.fun7 = ins.fun7
+        rv.func3 = ins.func3
+        rv.func7 = ins.func7
         rv.imm = ins.imm
 
         return rv
