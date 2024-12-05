@@ -16,13 +16,13 @@ public class ADD <: Instruction {
     }
 }
 
-/// 将rs1和rs2中的值按位进行与操作，并将结果写入rd
+/// 将rs1中的值减去rs2中的值，并将结果写入rd
 ///|31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|11|10|09|08|07|06|05|04|03|02|01|00|
-///|      0000000       |       rs2    |     rs1      |   111  |      rd      |      0110011       |
+///|      0100000       |       rs2    |     rs1      |   000  |      rd      |      0110011       |
 
-public class AND <: Instruction {
+public class SUB <: Instruction {
     public func execute(cpuInfo: Cpu) {
-        var newVal = cpuInfo.registers[this.rs1].getValue() & cpuInfo.registers[this.rs2].getValue()
+        var newVal = cpuInfo.registers[this.rs1].getValue() - cpuInfo.registers[this.rs2].getValue()
         cpuInfo.registers[this.rd].setValue(newVal)
         CpuService.registerChange(this.rd, newVal)
     }
@@ -40,6 +40,18 @@ public class MUL <: Instruction {
     }
 }
 
+/// 将rs1和rs2中的值按位进行与操作，并将结果写入rd
+///|31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|11|10|09|08|07|06|05|04|03|02|01|00|
+///|      0000000       |       rs2    |     rs1      |   111  |      rd      |      0110011       |
+
+public class AND <: Instruction {
+    public func execute(cpuInfo: Cpu) {
+        var newVal = cpuInfo.registers[this.rs1].getValue() & cpuInfo.registers[this.rs2].getValue()
+        cpuInfo.registers[this.rd].setValue(newVal)
+        CpuService.registerChange(this.rd, newVal)
+    }
+}
+
 /// 将rs1和rs2中的值按位进行或操作，并将结果写入rd
 ///|31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|11|10|09|08|07|06|05|04|03|02|01|00|
 ///|      0000000       |       rs2    |     rs1      |   110  |      rd      |      0110011       |
@@ -47,6 +59,18 @@ public class MUL <: Instruction {
 public class OR <: Instruction {
     public func execute(cpuInfo: Cpu) {
         var newVal = cpuInfo.registers[this.rs1].getValue()|cpuInfo.registers[this.rs2].getValue()
+        cpuInfo.registers[this.rd].setValue(newVal)
+        CpuService.registerChange(this.rd, newVal)
+    }
+}
+
+/// 将rs1和rs2中的值按位进行异或操作，并将结果写入rd
+///|31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|11|10|09|08|07|06|05|04|03|02|01|00|
+///|      0000000       |       rs2    |     rs1      |   100  |      rd      |      0110011       |
+
+public class XOR <: Instruction {
+    public func execute(cpuInfo: Cpu) {
+        var newVal = cpuInfo.registers[this.rs1].getValue() ^ cpuInfo.registers[this.rs2].getValue()
         cpuInfo.registers[this.rd].setValue(newVal)
         CpuService.registerChange(this.rd, newVal)
     }
@@ -122,29 +146,5 @@ public class SRL <: Instruction {
         var newVal = UInt32(cpuInfo.registers[this.rs1].getValue()) >> cpuInfo.registers[this.rs2].getValue()
         cpuInfo.registers[this.rd].setValue(Int64(newVal))
         CpuService.registerChange(this.rd, Int64(newVal))
-    }
-}
-
-/// 将rs1中的值减去rs2中的值，并将结果写入rd
-///|31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|11|10|09|08|07|06|05|04|03|02|01|00|
-///|      0100000       |       rs2    |     rs1      |   000  |      rd      |      0110011       |
-
-public class SUB <: Instruction {
-    public func execute(cpuInfo: Cpu) {
-        var newVal = cpuInfo.registers[this.rs1].getValue() - cpuInfo.registers[this.rs2].getValue()
-        cpuInfo.registers[this.rd].setValue(newVal)
-        CpuService.registerChange(this.rd, newVal)
-    }
-}
-
-/// 将rs1和rs2中的值按位进行异或操作，并将结果写入rd
-///|31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|11|10|09|08|07|06|05|04|03|02|01|00|
-///|      0000000       |       rs2    |     rs1      |   100  |      rd      |      0110011       |
-
-public class XOR <: Instruction {
-    public func execute(cpuInfo: Cpu) {
-        var newVal = cpuInfo.registers[this.rs1].getValue() ^ cpuInfo.registers[this.rs2].getValue()
-        cpuInfo.registers[this.rd].setValue(newVal)
-        CpuService.registerChange(this.rd, newVal)
     }
 }

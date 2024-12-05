@@ -3,32 +3,32 @@ package riscv.cpu
 public class InstructionType {
     // Register
     public static let ADD = "ADD"
+    public static let SUB = "SUB"
     public static let AND = "AND"
-    public static let MUL = "MUL"
     public static let OR = "OR"
+    public static let XOR = "XOR"
     public static let SLL = "SLL"
     public static let SLT = "SLT"
     public static let SLTU = "SLTU"
     public static let SRA = "SRA"
     public static let SRL = "SRL"
-    public static let SUB = "SUB"
-    public static let XOR = "XOR"
+    public static let MUL = "MUL"
     // Immediate
     public static let ADDI = "ADDI"
     public static let ANDI = "ANDI"
-    public static let JALR = "JALR"
-    public static let LB = "LB"
-    public static let LBU = "LBU"
-    public static let LH = "LH"
-    public static let LHU = "LHU"
-    public static let LW = "LW"
     public static let ORI = "ORI"
+    public static let XORI = "XORI"
     public static let SLLI = "SLLI"
     public static let SLTI = "SLTI"
     public static let SLTIU = "SLTIU"
     public static let SRAI = "SRAI"
     public static let SRLI = "SRLI"
-    public static let XORI = "XORI"
+    public static let LB = "LB"
+    public static let LBU = "LBU"
+    public static let LH = "LH"
+    public static let LHU = "LHU"
+    public static let LW = "LW"
+    public static let JALR = "JALR"
     // Store
     public static let SB = "SB"
     public static let SH = "SH"
@@ -48,9 +48,9 @@ public class InstructionType {
 
 
     //Register的缩写，操作两个寄存器，并把结果写到第三个寄存器上的类型
-    public static let R: Array<String> = [ADD, AND, OR, SLL, SLT, SLTU, SRA, SRL, SUB, XOR, MUL]
+    public static let R: Array<String> = [ADD, SUB, AND, OR, XOR, SLL, SLT, SLTU, SRA, SRL, MUL]
     //Immediate的缩写，操作一个寄存器和一个常量，并把结果写到第二个寄存器上的类型
-    public static let I: Array<String> = [ADDI, ANDI, JALR, LB, LBU, LH, LHU, LW, ORI, SLLI, SLTI, SLTIU, SRAI, SRLI, XORI]
+    public static let I: Array<String> = [ADDI, ANDI, ORI, XORI, SLLI, SLTI, SLTIU, SRAI, SRLI, LB, LBU, LH, LHU, LW, JALR]
     //Branch的缩写，用于分支判断，操作两个寄存器和一个常量
     public static let B: Array<String> = [BEQ, BGE, BGEU, BLT, BLTU, BNE]
     //Store的缩写，用于将寄存器数据写入内存，操作两个寄存器和一个常量
