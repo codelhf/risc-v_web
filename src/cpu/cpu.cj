@@ -132,10 +132,10 @@ public class Cpu {
         var ins = decodeInstruction(insStr) //译指
         var comment = ins.toString()
         if (Util.isBlank(comment)) {
-            comment += "${Rune(Util.binToInt(insStr[24..32]))}"
-            comment += "${Rune(Util.binToInt(insStr[16..24]))}"
-            comment += "${Rune(Util.binToInt(insStr[8..16]))}"
-            comment += "${Rune(Util.binToInt(insStr[0..8]))}"
+            comment += "${Rune(Util.binToUInt(insStr[24..32]))}"
+            comment += "${Rune(Util.binToUInt(insStr[16..24]))}"
+            comment += "${Rune(Util.binToUInt(insStr[8..16]))}"
+            comment += "${Rune(Util.binToUInt(insStr[0..8]))}"
         }
         return comment
     }
@@ -211,29 +211,25 @@ public class Cpu {
             line = line.trimAscii()
             if (!isText) {
                 line = line.replace("-", "")
-                if (line.size < 8) {
-                    // 8位以内按照16进制处理
-                    line = line.padStart(8, padding: "0")
-                    // 转为2进制
-                    line = Util.hexToBinary(line)
-                }
-                if (line.size < 32) {
-                    // 8到32按照2进制处理不足32位则补全
-                    line = line.padStart(32, padding: "0")
+                while (line.size < 32) {
+                    // 不足32位则补全
+                    line = "0" + line
                 }
                 if (line.size > 32) {
                     // 超过32位则截取
                     line = line[0..32]
                 }
-                inputData.appendAll(Util.binaryToBytes(line))
+                var cmd = Util.binToBytes(line)
+                inputData.appendAll(cmd)
             } else {
                 for (c in line) {
-                    if (c > 255) {
-                        continue
-                    } else {
+                    if (c < 255) {
                         inputData.append(c)
+                    } else {
+                        continue //中文处理
                     }
                 }
+                // 换行
                 inputData.append(UInt8(0x0A))
             }
         }

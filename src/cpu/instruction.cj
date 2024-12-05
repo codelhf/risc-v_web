@@ -52,29 +52,29 @@ public open class Instruction {
         // ins.rs2 = Int64((data >> 20) & 0x1f)
         // ins.fun3 = Int64((data >> 12) & 0x7)
         // ins.fun7 = Int64((data >> 25) & 0x7f)
-        ins.opCode = Util.binToInt(binStr[25..32])
-        ins.rd = Util.binToInt(binStr[20..25])
-        ins.rs1 = Util.binToInt(binStr[12..17])
-        ins.rs2 = Util.binToInt(binStr[7..12])
-        ins.fun3 = Util.binToInt(binStr[17..20])
-        ins.fun7 = Util.binToInt(binStr[0..7])
+        ins.opCode = Util.binToUInt(binStr[25..32])
+        ins.rd = Util.binToUInt(binStr[20..25])
+        ins.rs1 = Util.binToUInt(binStr[12..17])
+        ins.rs2 = Util.binToUInt(binStr[7..12])
+        ins.fun3 = Util.binToUInt(binStr[17..20])
+        ins.fun7 = Util.binToUInt(binStr[0..7])
 
         var imm: Int64 = 0
         if (ins.opCode == Const.OP0000011 || ins.opCode == Const.OP0010011 || ins.opCode == Const.OP1100111) {
             // imm[11:0]
-            imm = Util.immToInt(binStr[0..12])
+            imm = Util.binToInt(binStr[0..12])
         } else if (ins.opCode == Const.OP1100011) {
             // imm[12|10:5] | imm[4:1|11]
-            imm = Util.immToInt(binStr[0..1] + binStr[24..25] + binStr[1..7] + binStr[20..24] )
+            imm = Util.binToInt(binStr[0..1] + binStr[24..25] + binStr[1..7] + binStr[20..24] )
         } else if (ins.opCode == Const.OP0100011) {
             // imm[11:5] | imm[4:0]
-            imm = Util.immToInt(binStr[0..8] + binStr[20..25])
+            imm = Util.binToInt(binStr[0..8] + binStr[20..25])
         } else if (ins.opCode == Const.OP0110111 || ins.opCode == Const.OP0010111) {
             // imm[31:12]
-            imm = Util.immToInt(binStr[0..20])
+            imm = Util.binToInt(binStr[0..20])
         } else if (ins.opCode == Const.OP1101111) {
             // imm[20|10:1|11|19:12]
-            imm = Util.immToInt(binStr[0..1] + binStr[12..20] + binStr[11..12] + binStr[1..11])
+            imm = Util.binToInt(binStr[0..1] + binStr[12..20] + binStr[11..12] + binStr[1..11])
         }
         ins.imm = imm
 
@@ -248,13 +248,13 @@ public open class Instruction {
 
         if (InstructionType.R.contains(cmd)) {
             op = Const.OP0110011Str
-            if (cmd == InstructionType.SUB || cmd == InstructionType.SRA) {
-                func7 = Const.F0100000Str
-            } else if (cmd == InstructionType.MUL) {
-                func7 = Const.F0000001Str
-            }
-            if (cmd == InstructionType.ADD || cmd == InstructionType.MUL || cmd == InstructionType.SUB) {
+            if (cmd == InstructionType.ADD || cmd == InstructionType.SUB || cmd == InstructionType.MUL) {
                 func3 = Const.F000Str
+                if (cmd == InstructionType.SUB) {
+                    func7 = Const.F0100000Str
+                } else if (cmd == InstructionType.MUL) {
+                    func7 = Const.F0000001Str
+                }
             } else if (cmd == InstructionType.SLL) {
                 func3 = Const.F001Str
             } else if (cmd == InstructionType.SLT) {
@@ -265,18 +265,21 @@ public open class Instruction {
                 func3 = Const.F100Str
             } else if (cmd == InstructionType.SRL || cmd == InstructionType.SRA) {
                 func3 = Const.F101Str
+                if (cmd == InstructionType.SRA) {
+                    func7 = Const.F0100000Str
+                }
             } else if (cmd == InstructionType.OR) {
                 func3 = Const.F110Str
             } else if (cmd == InstructionType.AND) {
                 func3 = Const.F111Str
             }
-            if (rs1value == -1) {
+            if (rs1value < 0 || rs1value > 31) {
                 rv = "//rs1格式错误，请输入0-31之间的数字"
             }
-            if (rs2value == -1) {
+            if (rs2value < 0 || rs2value > 31) {
                 rv = "//rs2格式错误，请输入0-31之间的数字"
             }
-            if (rdvalue == Int64.Min) {
+            if (rdvalue < 0 || rdvalue > 31) {
                 rv = "//rd格式错误，请输入0-31之间的数字"
             }
             if (rv == "") {
@@ -285,9 +288,6 @@ public open class Instruction {
             }
         } else if (InstructionType.I.contains(cmd)) {
             op = Const.OP0010011Str
-            if (cmd == InstructionType.SRAI) {
-                func7 = Const.F0100000Str
-            }
             if (cmd == InstructionType.ADDI) {
                 func3 = Const.F000Str
             } else if (cmd == InstructionType.SLLI) {
@@ -300,6 +300,9 @@ public open class Instruction {
                 func3 = Const.F100Str
             } else if (cmd == InstructionType.SRLI || cmd == InstructionType.SRAI) {
                 func3 = Const.F101Str
+                if (cmd == InstructionType.SRAI) {
+                    func7 = Const.F0100000Str
+                }
             } else if (cmd == InstructionType.ORI) {
                 func3 = Const.F110Str
             } else if (cmd == InstructionType.ANDI) {
@@ -323,14 +326,14 @@ public open class Instruction {
                 func3 = Const.F000Str
                 op = Const.OP1100111Str
             }
-            if (rs1value == -1) {
+            if (rs1value < 0 || rs1value > 31) {
                 rv = "//rs1格式错误，请输入0-31之间的数字"
             }
-            if (rdvalue == -1) {
+            if (rdvalue < 0 || rdvalue > 31) {
                 rv = "//rd格式错误，请输入0-31之间的数字"
             }
-            if (immvalue == Int64.Min) {
-                rv = "//imm格式错误，请输入一个数字"
+            if (immvalue < -2048 || immvalue > 2047) {
+                rv = "//imm数值错误，请输入-2048~2047的数字"
             }
             if (rv == "") {
                 if (cmd == InstructionType.SLLI || cmd == InstructionType.SRLI || cmd == InstructionType.SRAI) {
@@ -359,14 +362,14 @@ public open class Instruction {
             } else if (cmd == InstructionType.BGEU) {
                 func3 = Const.F111Str
             }
-            if (rs1value == -1) {
+            if (rs1value < 0 || rs1value > 31) {
                 rv = "//rs1格式错误，请输入0-31之间的数字"
             }
-            if (rs2value == -1) {
+            if (rs2value < 0 || rs2value > 31) {
                 rv = "//rs2格式错误，请输入0-31之间的数字"
             }
-            if (immvalue == Int64.Min) {
-                rv = "//imm格式错误，请输入一个数字"
+            if (immvalue < -2048 || immvalue > 2047) {
+                rv = "//imm数值错误，请输入-2048~2047的数字"
             }
             if (rv == "") {
                 var ims = getImmStr(immvalue, 12) + "0"
@@ -382,14 +385,14 @@ public open class Instruction {
             } else if (cmd == InstructionType.SW) {
                 func3 = Const.F010Str
             }
-            if (rs1value == -1) {
+            if (rs1value < 0 || rs1value > 31) {
                 rv = "//rs1格式错误，请输入0-31之间的数字"
             }
-            if (rs2value == -1) {
+            if (rs2value < 0 || rs2value > 31) {
                 rv = "//rs2格式错误，请输入0-31之间的数字"
             }
-            if (immvalue == Int64.Min) {
-                rv = "//imm格式错误，请输入一个数字"
+            if (immvalue < -2048 || immvalue > 2047) {
+                rv = "//imm数值错误，请输入-2048~2047的数字"
             }
             if (rv == "") {
                 var ims = getImmStr(immvalue, 12)
@@ -402,11 +405,11 @@ public open class Instruction {
             } else if (cmd == InstructionType.LUI) {
                 op = Const.OP0110111Str
             }
-            if (rdvalue == -1) {
+            if (rdvalue < 0 || rdvalue > 31) {
                 rv = "//rd格式错误，请输入0-31之间的数字"
             }
-            if (immvalue == Int64.Min) {
-                rv = "//imm格式错误，请输入一个数字"
+            if (immvalue < -524288 || immvalue > 524287) {
+                rv = "//imm数值错误，请输入-524288~524287的数字"
             }
             if (rv == "") {
                 var ims = getImmStr(immvalue, 20)
@@ -415,11 +418,11 @@ public open class Instruction {
             }
         } else if (InstructionType.J.contains(cmd)) {
             op = Const.OP1101111Str
-            if (rdvalue == -1) {
+            if (rdvalue < 0 || rdvalue > 31) {
                 rv = "//rd格式错误，请输入0-31之间的数字"
             }
-            if (immvalue == Int64.Min) {
-                rv = "//imm格式错误，请输入一个数字"
+            if (immvalue < -524288 || immvalue > 524287) {
+                rv = "//imm数值错误，请输入-524288~524287的数字"
             }
             if (rv == "") {
                 var ims = getImmStr(immvalue, 20) + "0"
@@ -438,18 +441,13 @@ public open class Instruction {
         var register = reg.trimAscii().toAsciiLower()
         if (reg.startsWith("x") || reg.startsWith("X")) {
             register = register[1..]
+            rv = Util.strToInt(register)
         } else {
             for (i in 0..Cpu.registerNames.size) {
                 if (register.equalsIgnoreAsciiCase(Cpu.registerNames[i])) {
                     rv = i
                 }
             }
-        }
-        if (rv == -1) {
-            rv = Util.strToInt(register)
-        }
-        if (rv < 0 || rv > 31) {
-            rv = -1
         }
         return rv
     }

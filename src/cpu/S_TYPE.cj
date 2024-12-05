@@ -47,11 +47,11 @@ public class SH <: Instruction {
         }
         if (device.getSize() > 0) {
             var bin = Util.to32BString(cpuInfo.registers[this.rs2].getValue())
-            var bs = Util.binaryToBytes(bin)
+            var bs = Util.binToBytes(bin)
             device.write(deviceStart, bs[0])
-            CpuService.memoryChange(address, Int64(device.read(deviceStart)))
+            CpuService.memoryChange(address, Int64(bs[0]))
             device.write(deviceStart + 1, bs[1])
-            CpuService.memoryChange(address + 1, Int64(device.read(deviceStart + 1)))
+            CpuService.memoryChange(address + 1, Int64(bs[2]))
         }
     }
 }
@@ -74,15 +74,15 @@ public class SW <: Instruction {
         }
         if (device.getSize() > 0) {
             var bin = Util.to32BString(cpuInfo.registers[this.rs2].getValue())
-            var bs = Util.binaryToBytes(bin)
+            var bs = Util.binToBytes(bin)
             device.write(deviceStart, bs[0])
-            CpuService.memoryChange(address, Int64(device.read(deviceStart)))
+            CpuService.memoryChange(address, Int64(bs[0]))
             device.write(deviceStart + 1, bs[1])
-            CpuService.memoryChange(address+1, Int64(device.read(deviceStart + 1)))
-            device.write(deviceStart + 2, bs[1])
-            CpuService.memoryChange(address+2, Int64(device.read(deviceStart + 2)))
-            device.write(deviceStart + 3, bs[1])
-            CpuService.memoryChange(address+3, Int64(device.read(deviceStart + 3)))
+            CpuService.memoryChange(address+1, Int64(bs[1]))
+            device.write(deviceStart + 2, bs[2])
+            CpuService.memoryChange(address+2, Int64(bs[2]))
+            device.write(deviceStart + 3, bs[3])
+            CpuService.memoryChange(address+3, Int64(bs[3]))
         }
     }
 }

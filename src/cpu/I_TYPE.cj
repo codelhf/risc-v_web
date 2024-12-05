@@ -144,8 +144,8 @@ public class LHU <: Instruction {
             let val1 = device.read(deviceStart)
             let val2 = device.read(deviceStart + 1)
             var newVal = Util.to8BString(val2) + Util.to8BString(val1)
-            cpuInfo.registers[this.rd].setValue(Util.binToInt(newVal))
-            CpuService.registerChange(this.rd, Util.binToInt(newVal))
+            cpuInfo.registers[this.rd].setValue(Util.binToUInt(newVal))
+            CpuService.registerChange(this.rd, Util.binToUInt(newVal))
         }
     }
 }

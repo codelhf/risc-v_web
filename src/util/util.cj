@@ -44,7 +44,7 @@ public class Util {
             }
         }
         // 加一取补码
-        let result = Util.binToInt(str.toString()) + 1
+        let result = Int64.parse("0b" + str.toString()) + 1
         return result.format("B")
     }
 
@@ -68,15 +68,10 @@ public class Util {
     }
 
     public static func binToInt(str: String): Int64 {
-        var val = str.trimAscii().toAsciiLower()
-        if (!val.startsWith("0b")) {
-            val = "0b" + val
+        var line = str.trimAscii().toAsciiLower().replace("-", "").replace(" ", "")
+        if (line.startsWith("0b")) {
+            line = line[2..]
         }
-        return Int64.parse(val)
-    }
-
-    public static func immToInt(str: String): Int64 {
-        var line = str.trimAscii()
         var prefix = "0"
         if (line.startsWith("1")) {
             prefix = "1"
@@ -97,32 +92,25 @@ public class Util {
         return result
     }
 
-    public static func hexToBinary(str: String): String {
-        var line = str.trimAscii()
-        while (line.size < 8) {
-            line = "0" + line
+    public static func binToUInt(str: String): Int64 {
+        var line = str.trimAscii().toAsciiLower().replace("-", "").replace(" ", "")
+        if (line.startsWith("0b")) {
+            line = line[2..]
         }
-        if (line.size > 8) {
-            line = line[0..8]
-        }
-        var rv = strToInt("0x" + line)
-        return to32BString(rv)
-    }
-
-    public static func binaryToHex(str: String): String {
-        var line = str.trimAscii()
         while (line.size < 32) {
             line = "0" + line
         }
         if (line.size > 32) {
             line = line[0..32]
         }
-        var rv = strToInt("0b" + line)
-        return to8XString(rv)
+        return Int64(UInt32.parse("0b" + line))
     }
 
-    public static func binaryToBytes(str: String): ArrayList<UInt8> {
-        var line = str.trimAscii().replace("-", "")
+    public static func binToBytes(str: String): ArrayList<UInt8> {
+        var line = str.trimAscii().toAsciiLower().replace("-", "").replace(" ", "")
+        if (line.startsWith("0b")) {
+            line = line[2..]
+        }
         while (line.size < 32) {
             line = "0" + line
         }
