@@ -61,13 +61,14 @@ public class CpuService {
             var pa = msg.split(",")
             var result = computer.cpu.translateCmd(pa[0], pa[1], pa[2], pa[3], pa[4])
             sendMsg("translate", result)
-        } else if(cmd.equalsIgnoreAsciiCase("batchtranslate")) {
-            var result = computer.cpu.translateText(msg)
+        } else if(cmd.equalsIgnoreAsciiCase("translate")) {
+            let args = msg.split(",")
+            var result = computer.cpu.translateText(args[0])
             sendMsg("translate", result)
         } else if(cmd.equalsIgnoreAsciiCase("export")) {
             let args = msg.split(",")
-            var rv = computer.cpu.export(args[0], args[1])
-            sendMsg("translate", rv)
+            var result = computer.cpu.export(args[0], args[1])
+            sendMsg("translate", result)
         } else if(cmd.equalsIgnoreAsciiCase("setvalue")) {
             let args = msg.split(",")
             computer.cpu.setValue(args[0], args[1])

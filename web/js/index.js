@@ -158,8 +158,8 @@ document.getElementById("reset").addEventListener("click", function (event) {
 });
 
 document.getElementById("debug").addEventListener("click", function (event) {
-    var debugaddr = document.getElementById("debugaddr").value;
-    sendData({ cmd: 'debug', msg: debugaddr });
+    var debugAddr = document.getElementById("debugAddr").value;
+    sendData({ cmd: 'debug', msg: debugAddr });
     modelHide("debugwindow", event);
 });
 
@@ -172,9 +172,9 @@ document.getElementById("setvalue").addEventListener("click", function (event) {
 
 document.getElementById("write").addEventListener("click", function (event) {
     var message = document.getElementById("messageInput").value;
-    var startaddr = document.getElementById("startaddr").value;
-    var istext = document.getElementById("istext").checked;
-    sendData({ cmd: 'write', msg: `${startaddr};${istext};${message}` });
+    var startAddr = document.getElementById("startAddr").value;
+    var isText = document.getElementById("isText").checked;
+    sendData({ cmd: 'write', msg: `${startAddr};${isText};${message}` });
     modelHide("writewindow", event);
 });
 
@@ -190,13 +190,13 @@ document.getElementById("book").addEventListener("click", function (event) {
 
 document.getElementById("translate").addEventListener("click", function (event) {
     var message = document.getElementById("textInput").value;
-    sendData({ cmd: 'batchtranslate', msg: message });
+    sendData({ cmd: 'translate', msg: message });
     modelHide("translatewindow", event);
 });
 
 document.getElementById("export").addEventListener("click", function (event) {
-    var addr = document.getElementById("exportaddr").value;
-    var length = document.getElementById("exportlength").value;
-    sendData({ cmd: 'export', msg: `${addr},${length}` });
+    var exportStart = document.getElementById("exportStart").value;
+    var exportEnd = document.getElementById("exportEnd").value;
+    sendData({ cmd: 'export', msg: `${exportStart},${exportEnd}` });
     modelHide("setvaluewindow", event);
 });

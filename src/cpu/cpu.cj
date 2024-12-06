@@ -376,13 +376,14 @@ public class Cpu {
         return rv.toString()
     }
 
-    public func export(addr: String, length: String): String {
-        var ii = Util.strToInt(addr)
-        var ll = Util.strToInt(length)
+    public func export(startAddr: String, endAddr: String): String {
+        var start = Util.strToInt(startAddr)
+        var end = Util.strToInt(endAddr)
+        var length = end - start
         var sb = StringBuilder()
-        for (i in 0..ll) {
+        for (i in 0..length) {
             if (i % 4 == 0) {
-                var insStr = fetchInstruction(ii) // 取指
+                var insStr = fetchInstruction(start) // 取指
                 sb.append(insStr)
                 var ins = decodeInstruction(insStr) //译指
                 var comm = ins.toString()
@@ -390,7 +391,7 @@ public class Cpu {
                     comm = "//" + comm
                 }
                 sb.append(comm)
-                ii += 4
+                start += 4
             }
         }
         return sb.toString()

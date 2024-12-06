@@ -63,7 +63,7 @@
                     <button class="btn btn-primary mb-3" id="pause">暂停</button>
                     <button class="btn btn-primary mb-3" id="reset">重启</button>
                     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#debugwindow">断点</button>
-                    <!-- <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#setvaluewindow">设置值</button> -->
+                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#setvaluewindow">设置值</button>
                     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#writewindow">写指令</button>
                     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#bookwindow">查手册</button>
                     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#translatewindow">批量翻译</button>
@@ -86,7 +86,7 @@
             <div class="modal-body">
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">断点地址，多地址用逗号分隔</label>
-                    <input class="form-control" id="debugaddr" value="0x00"/>
+                    <input class="form-control" id="debugAddr" value="0x00"/>
                 </div>
             </div>
             <div class="modal-footer">
@@ -134,11 +134,11 @@
             <div class="modal-body">
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">起始地址</label>
-                    <input class="form-control" id="startaddr" value="0x64"/>
+                    <input class="form-control" id="startAddr" value="0x64"/>
                 </div>
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">文本</label>
-                    <input type="checkbox" class="form-check-input" id="istext" value="text"/>
+                    <input type="checkbox" class="form-check-input" id="isText" value="text"/>
                 </div>
             </div>
             <div class="modal-footer">
@@ -224,13 +224,13 @@
             <div class="modal-body">
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">起始地址</label>
-                    <input class="form-control" id="exportaddr" value="0x00"/>
+                    <input class="form-control" id="exportStart" value="0x00"/>
                 </div>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label">字节数</label>
-                    <input class="form-control" id="exportlength" value=""/>
+                    <label for="exampleFormControlTextarea1" class="form-label">结束地址</label>
+                    <input class="form-control" id="exportEnd" value="0x00"/>
                 </div>
             </div>
             <div class="modal-footer">

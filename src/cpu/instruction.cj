@@ -472,7 +472,7 @@ public open class Instruction {
 
     private static func parseImm(imm: String): Int64 {
         var rv: Int64 = Int64.Min
-        if (Util.isIntString(imm)) {
+        if (!Util.isIntString(imm)) {
             return rv
         }
         rv = Util.strToInt(imm)
