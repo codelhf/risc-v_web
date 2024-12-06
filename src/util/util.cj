@@ -4,6 +4,7 @@ import encoding.hex.*
 import encoding.json.*
 import std.convert.*
 import std.format.*
+import std.regex.*
 import std.collection.ArrayList
 
 public class Util {
@@ -48,13 +49,11 @@ public class Util {
         return result.format("B")
     }
 
-    // public static func isHexString(str: String): Bool {
-    //     return str.startsWith("0x")
-    // }
-
-    // public static func isBinaryString(str: String): Bool {
-    //     return str.startsWith("0b")
-    // }
+    public static func isIntString(str: String): Bool {
+        let r = Regex("^(0b[01]+|0x[0-9a-fA-F]+|\\d+)$")
+        let md = r.matcher(str).allCount()
+        return md > 0
+    }
 
     public static func strToInt(str: String): Int64 {
         var val = str.trimAscii().toAsciiLower()

@@ -330,8 +330,8 @@ public open class Instruction {
             if (rdvalue < 0 || rdvalue > 31) {
                 rv = "//rd格式错误，请输入0-31之间的数字"
             }
-            if (immvalue < -2048 || immvalue > 2047) {
-                rv = "//imm数值错误，请输入-2048~2047的数字"
+            if (immvalue == Int64.Min) {
+                rv = "//imm格式错误，请输入正确的数值"
             }
             if (rv == "") {
                 if (cmd == InstructionType.SLLI || cmd == InstructionType.SRLI || cmd == InstructionType.SRAI) {
@@ -339,6 +339,10 @@ public open class Instruction {
                 } else {
                     rv = "${getImmStr(immvalue, 12)}${getRegStr(rs1value)}${func3}${getRegStr(rdvalue)}${op}"
                 }
+            }
+            if (immvalue < -2048 || immvalue > 2047) {
+                var immBinStr = Util.to32BString(immvalue)
+                immvalue = Util.binToInt(immBinStr[20..])
             }
             if (cmd.startsWith("L") || cmd.equalsIgnoreAsciiCase(InstructionType.JALR)) {
                 rv += "//${cmd.toAsciiLower()} x${rdvalue},${immvalue}(x${rs1value})\\n"
@@ -366,12 +370,16 @@ public open class Instruction {
             if (rs2value < 0 || rs2value > 31) {
                 rv = "//rs2格式错误，请输入0-31之间的数字"
             }
-            if (immvalue < -2048 || immvalue > 2047) {
-                rv = "//imm数值错误，请输入-2048~2047的数字"
+            if (immvalue == Int64.Min) {
+                rv = "//imm格式错误，请输入正确的数值"
             }
             if (rv == "") {
                 var ims = getImmStr(immvalue, 12) + "0"
                 rv = "${ims[0..1]}${ims[2..8]}${getRegStr(rs2value)}${getRegStr(rs1value)}${func3}${ims[8..12]}${ims[1..2]}${op}"
+            }
+            if (immvalue < -2048 || immvalue > 2047) {
+                var immBinStr = Util.to32BString(immvalue)
+                immvalue = Util.binToInt(immBinStr[20..])
             }
             rv += "//${cmd.toAsciiLower()} x${rs1value},x${rs2value},${immvalue}\\n"
         } else if (InstructionType.S.contains(cmd)) {
@@ -389,12 +397,16 @@ public open class Instruction {
             if (rs2value < 0 || rs2value > 31) {
                 rv = "//rs2格式错误，请输入0-31之间的数字"
             }
-            if (immvalue < -2048 || immvalue > 2047) {
-                rv = "//imm数值错误，请输入-2048~2047的数字"
+            if (immvalue == Int64.Min) {
+                rv = "//imm格式错误，请输入正确的数值"
             }
             if (rv == "") {
                 var ims = getImmStr(immvalue, 12)
                 rv = "${ims[0..7]}${getRegStr(rs2value)}${getRegStr(rs1value)}${func3}${ims[7..12]}${op}"
+            }
+            if (immvalue < -2048 || immvalue > 2047) {
+                var immBinStr = Util.to32BString(immvalue)
+                immvalue = Util.binToInt(immBinStr[20..])
             }
             rv += "//${cmd.toAsciiLower()} x${rs2value},${immvalue}(x${rs1value})\\n"
         } else if (InstructionType.U.contains(cmd)) {
@@ -406,12 +418,16 @@ public open class Instruction {
             if (rdvalue < 0 || rdvalue > 31) {
                 rv = "//rd格式错误，请输入0-31之间的数字"
             }
-            if (immvalue < -524288 || immvalue > 524287) {
-                rv = "//imm数值错误，请输入-524288~524287的数字"
+            if (immvalue == Int64.Min) {
+                rv = "//imm格式错误，请输入正确的数值"
             }
             if (rv == "") {
                 var ims = getImmStr(immvalue, 20)
                 rv = "${ims}${getRegStr(rdvalue)}${op}"
+            }
+            if (immvalue < -524288 || immvalue > 524287) {
+                var immBinStr = Util.to32BString(immvalue)
+                immvalue = Util.binToInt(immBinStr[12..])
             }
             rv += "//${cmd.toAsciiLower()} x${rdvalue},${immvalue}\\n"
         } else if (InstructionType.J.contains(cmd)) {
@@ -419,12 +435,16 @@ public open class Instruction {
             if (rdvalue < 0 || rdvalue > 31) {
                 rv = "//rd格式错误，请输入0-31之间的数字"
             }
-            if (immvalue < -524288 || immvalue > 524287) {
-                rv = "//imm数值错误，请输入-524288~524287的数字"
+            if (immvalue == Int64.Min) {
+                rv = "//imm格式错误，请输入正确的数值"
             }
             if (rv == "") {
                 var ims = getImmStr(immvalue, 20) + "0"
                 rv = "${ims[0..1]}${ims[10..20]}${ims[9..10]}${ims[1..9]}${getRegStr(rdvalue)}${op}"
+            }
+            if (immvalue < -524288 || immvalue > 524287) {
+                var immBinStr = Util.to32BString(immvalue)
+                immvalue = Util.binToInt(immBinStr[12..])
             }
             rv += "//${cmd.toAsciiLower()} x${rdvalue},${immvalue}\\n"
         }
@@ -452,7 +472,7 @@ public open class Instruction {
 
     private static func parseImm(imm: String): Int64 {
         var rv: Int64 = Int64.Min
-        if (Util.isBlank(imm)) {
+        if (Util.isIntString(imm)) {
             return rv
         }
         rv = Util.strToInt(imm)
