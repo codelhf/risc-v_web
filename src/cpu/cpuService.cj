@@ -62,8 +62,8 @@ public class CpuService {
             var result = computer.cpu.translateCmd(pa[0], pa[1], pa[2], pa[3], pa[4])
             sendMsg("translate", result)
         } else if(cmd.equalsIgnoreAsciiCase("translate")) {
-            let args = msg.split(",")
-            var result = computer.cpu.translateText(args[0])
+            let args = msg
+            var result = computer.cpu.translateText(args)
             sendMsg("translate", result)
         } else if(cmd.equalsIgnoreAsciiCase("export")) {
             let args = msg.split(",")

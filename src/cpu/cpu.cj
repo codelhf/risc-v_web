@@ -399,15 +399,21 @@ public class Cpu {
 
     public func setValue(registerNumber: String, registerValue: String) {
         let r: Register
-        if (registerNumber.toAsciiLower() == pcName) {
-            r = pc
-        } else {
-            var index = Instruction.parseReg(registerNumber)
-            r = registers[index]
+        if (!Util.isIntString(registerNumber) || !Util.isIntString(registerValue)) {
+            return
         }
+        var index = Util.strToInt(registerNumber)
         var value = Util.strToInt(registerValue)
-        r.setValue(value)
-        //通知前台寄存器发生了变化，只是为了前台显示
-        CpuService.registerChange(r.index, r.getValue())
+        if (index > 0 && index < 32) {
+            r = registers[index]
+            r.setValue(value)
+            //通知前台寄存器发生了变化，只是为了前台显示
+            CpuService.registerChange(r.index, r.getValue())
+        } else if (index == 100) {
+            r = pc
+            r.setValue(value)
+            //通知前台寄存器发生了变化，只是为了前台显示
+            CpuService.registerChange(r.index, r.getValue())
+        }
     }
 }
