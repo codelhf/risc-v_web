@@ -50,7 +50,7 @@ public class Util {
     }
 
     public static func isIntString(str: String): Bool {
-        let r = Regex("^(0b[01]+|0x[0-9a-fA-F]+|\\d+)$")
+        let r = Regex("^(0b[01]+|0x[0-9a-fA-F]+|\\d+|-\\d+)$")
         let md = r.matcher(str).allCount()
         return md > 0
     }
