@@ -8,7 +8,7 @@ public class WebSocketService {
 
     public static func receiverMsg(ws: WebSocket): String {
         wslist.clear()
-        wslist.append(ws)
+        wslist.add(ws)
         // 3 消息收发
         // 收 hello
         let data = ArrayList<UInt8>()
@@ -16,7 +16,7 @@ public class WebSocketService {
         while(true) {
             match(frame.frameType) {
                 case ContinuationWebFrame =>
-                    data.appendAll(frame.payload)
+                    data.add(all: frame.payload)
                     if (frame.fin) {
                         break
                     }
@@ -24,7 +24,7 @@ public class WebSocketService {
                     if (!data.isEmpty()) {
                         throw Exception("invalid frame")
                     }
-                    data.appendAll(frame.payload)
+                    data.add(all: frame.payload)
                     if (frame.fin) {
                         break
                     }

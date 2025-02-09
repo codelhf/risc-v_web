@@ -39,7 +39,7 @@ public class Computer {
 
     public func writeRom(addr: Int64) {
         var cmds = ArrayList<UInt32>()
-        cmds.append(0b00000110010000000000000001101111) //jal x0,0,50 ，跳转到25行以后
+        cmds.add(0b00000110010000000000000001101111) //jal x0,0,50 ，跳转到25行以后
         var index = addr
         for (item in cmds) {
             let b1 = UInt8(item >> 0)

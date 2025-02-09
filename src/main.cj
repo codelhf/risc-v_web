@@ -1,11 +1,9 @@
 package riscv
 
 import net.http.*
-import std.log.*
 import std.collection.*
 import std.convert.*
 import encoding.json.*
-import std.format.*
 import std.fs.*
 import std.process.*
 import riscv.cpu.CpuService
@@ -31,7 +29,7 @@ main() {
 public class RequestDistributor <: HttpRequestDistributor {
     let map = HashMap<String, HttpRequestHandler>()
     public func register(path: String, handler: HttpRequestHandler): Unit {
-        map.put(path, handler)
+        map.add(path, handler)
     }
 
     public func distribute(path: String): HttpRequestHandler {
@@ -39,6 +37,7 @@ public class RequestDistributor <: HttpRequestDistributor {
         if (path == "/ws") {
             return WebSocketHandler()
         }
+        
         let file = Path("${Process.current.workingDirectory}/web/${path}")
         if (exists(file)) {
             return PageHandler()

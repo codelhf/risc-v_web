@@ -15,8 +15,8 @@ public open class Device {
     public init(size: Int64) {
         this.size = size
         this.data = ArrayList<Byte>(size)
-        for (i in 0..size) {
-            this.data.append(0)
+        for (_ in 0..size) {
+            this.data.add(0)
         }
         this.start = 0
         this.end = 0

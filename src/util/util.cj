@@ -3,7 +3,6 @@ package riscv.util
 import encoding.hex.*
 import encoding.json.*
 import std.convert.*
-import std.format.*
 import std.regex.*
 import std.collection.ArrayList
 
@@ -123,7 +122,7 @@ public class Util {
             if (i % 8 == 0) {
                 var numStr = line[i..(i + 8)]
                 var num = UInt8.parse("0b${numStr}")
-                rv.append(num)
+                rv.add(num)
             }
             i = i - 1
         }
@@ -137,16 +136,16 @@ public class Util {
         match (jsonObj.get("cmd")) {
             case Some(v) => v
                 let cmd = v.toString()
-                result.append(cmd[1..cmd.size-1])
+                result.add(cmd[1..cmd.size-1])
             case None =>
-                result.append("")
+                result.add("")
         }
         match (jsonObj.get("msg")) {
             case Some(v) => v
                 let msg = v.toString()
-                result.append(msg[1..msg.size-1])
+                result.add(msg[1..msg.size-1])
             case None =>
-                result.append("")
+                result.add("")
         }
         return result
     }

@@ -35,7 +35,7 @@ public class Cpu {
         for (i in 0..32) {
             var r = Register(i, "x${i}")
             r.name = registerNames[i]
-            this.registers.append(r)
+            this.registers.add(r)
         }
         this.pc = Register(100, pcName)
         this._running = false
@@ -183,7 +183,7 @@ public class Cpu {
             var str = item.trimAscii()
             var pos = Util.strToInt(str)
             if (pos > -1) {
-                debugAddress.append(pos)
+                debugAddress.add(pos)
             }
         }
     }
@@ -220,17 +220,17 @@ public class Cpu {
                     line = line[0..32]
                 }
                 var cmd = Util.binToBytes(line)
-                inputData.appendAll(cmd)
+                inputData.add(all: cmd)
             } else {
                 for (c in line) {
                     if (c < 255) {
-                        inputData.append(c)
+                        inputData.add(c)
                     } else {
                         continue //中文处理
                     }
                 }
                 // 换行
-                inputData.append(UInt8(0x0A))
+                inputData.add(UInt8(0x0A))
             }
         }
         writeToAddress(pos, inputData)
